@@ -4,7 +4,7 @@ import com.alealogic.repository.ResidentialProxyRepo
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.LinkedBlockingQueue
 
-class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo ) {
+class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo) {
 
     private val passwordToProxies = runBlocking { residentialProxyRepo.findAll() }
         .groupBy { it.password }
@@ -18,5 +18,4 @@ class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo ) {
             ?.also { customerProxies.add(it) }
             ?.port
     }
-
 }

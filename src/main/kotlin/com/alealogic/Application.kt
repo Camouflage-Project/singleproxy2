@@ -6,9 +6,9 @@ import com.alealogic.plugins.configureRouting
 import com.alealogic.plugins.configureSerialization
 import com.alealogic.repository.shutDownRepo
 import io.ktor.application.Application
-import io.ktor.server.engine.stop
-import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.addShutdownHook
+import io.ktor.server.engine.commandLineEnvironment
+import io.ktor.server.engine.stop
 import io.ktor.server.netty.NettyApplicationEngine
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit

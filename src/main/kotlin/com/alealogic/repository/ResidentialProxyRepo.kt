@@ -32,7 +32,6 @@ class ResidentialProxyRepo {
             .rows
             .map { it.toResidentialProxy() }
 
-
     private fun RowData.toResidentialProxy() =
         ResidentialProxy(this[0] as UUID, this[1] as String, this[2] as String, this[3] as LocalDateTime)
 }
