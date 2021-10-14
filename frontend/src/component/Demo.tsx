@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,8 +10,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from "axios";
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {useState} from "react";
 import {LinearProgress} from "@mui/material";
+import DownloadAlertDialog from "./DownloadAlertDialog";
+import {Platform} from "../enum/Platform";
 
 function Copyright(props: any) {
     return (
@@ -39,7 +41,24 @@ export default function Demo() {
     const [textFieldError, setTextFieldError] = useState(false)
     const [password, setPassword] = useState("")
     const [spinnerActive, setSpinnerActive] = useState(false)
+    const [open, setOpen] = React.useState(false);
+    const [platform, setPlatform] = React.useState(Platform.Linux)
     let lastSubmittedPassword: string;
+
+    const openAlertDialog = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
+        if (password.length === 0) {
+            setTextFieldError(true)
+            return
+        }
+
+        let platform: Platform = Platform[e.currentTarget.id as keyof typeof Platform];
+        setPlatform(platform)
+        setOpen(true);
+    };
+
+    const closeAlertDialog = () => {
+        setOpen(false);
+    };
 
     const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         setPassword(e.target.value)
@@ -59,10 +78,17 @@ export default function Demo() {
             {
                 password: password,
                 platform: e.currentTarget.id
-            }).then( _ => setSpinnerActive(false))
+            }).then(_ => setSpinnerActive(false))
 
         lastSubmittedPassword = password
     }
+
+    const platformDetails = [
+        {platform: Platform.Linux, name: "Linux"},
+        {platform: Platform.Windows, name: "Windows"},
+        {platform: Platform.MacOsIntel, name: "macOS - Intel"},
+        {platform: Platform.MacOsAppleSilicon, name: "macOS - Apple Silicon"}
+    ]
 
     return (
         <ThemeProvider theme={theme}>
@@ -94,45 +120,22 @@ export default function Demo() {
                             label="Password"
                             id="password"
                         />
-                        <Button
-                            onClick={handleClick}
-                            id="LINUX"
-                            fullWidth
-                            variant="contained"
-                            sx={{mt: 3, mb: 2}}
-                        >
-                            Linux
-                        </Button>
-                        <Button
-                            onClick={handleClick}
-                            id="WINDOWS"
-                            fullWidth
-                            variant="contained"
-                            sx={{mt: 3, mb: 2}}
-                        >
-                            Windows
-                        </Button>
-                        <Button
-                            onClick={handleClick}
-                            id="MACOSINTEL"
-                            fullWidth
-                            variant="contained"
-                            sx={{mt: 3, mb: 2}}
-                        >
-                            macOS - Intel
-                        </Button>
-                        <Button
-                            onClick={handleClick}
-                            id="MACOSAPPLESILICON"
-                            fullWidth
-                            variant="contained"
-                            sx={{mt: 3, mb: 2}}
-                        >
-                            macOS - Apple Silicon
-                        </Button>
-                        {spinnerActive && <LinearProgress color="secondary" sx={{marginTop: 3}} />}
+                        {platformDetails.map((p, i) =>
+                            <Button
+                                key={i}
+                                onClick={openAlertDialog}
+                                id={p.platform.toString()}
+                                fullWidth
+                                variant="contained"
+                                sx={{mt: 3, mb: 2}}
+                            >
+                                {p.name}
+                            </Button>)}
+                        {spinnerActive && <LinearProgress color="secondary" sx={{marginTop: 3}}/>}
                     </Box>
                 </Box>
+                <DownloadAlertDialog platform={platform} open={open} handleClose={closeAlertDialog}
+                                     password={password}/>
                 <Copyright sx={{mt: 8, mb: 4}}/>
             </Container>
         </ThemeProvider>
