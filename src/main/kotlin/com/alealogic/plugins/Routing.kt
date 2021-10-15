@@ -1,11 +1,12 @@
 package com.alealogic.plugins
 
-import com.alealogic.model.DownloadRequest
-import com.alealogic.repository.ResidentialProxyRepo
+import com.alealogic.model.Platform
+import com.alealogic.service.FileProvider
 import com.alealogic.service.ResidentialProxyProvider
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
@@ -14,14 +15,15 @@ import io.ktor.auth.form
 import io.ktor.auth.principal
 import io.ktor.features.AutoHeadResponse
 import io.ktor.features.CORS
+import io.ktor.http.ContentDisposition
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.request.receive
+import io.ktor.response.header
 import io.ktor.response.respond
-import io.ktor.response.respondFile
+import io.ktor.response.respondBytes
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -64,7 +66,7 @@ fun Application.configureRouting() {
     }
 
     routing {
-        val repo by inject<ResidentialProxyRepo>()
+        val fileProvider by inject<FileProvider>()
         val proxyProvider by inject<ResidentialProxyProvider>()
 
         authenticate("myauth1") {
@@ -80,15 +82,36 @@ fun Application.configureRouting() {
             }
         }
 
-        post("/download") {
-           val downloadRequest = call.receive<DownloadRequest>()
-            call.respondText { "hey there" }
+        get("/install") {
+            val queryParameters = call.request.queryParameters
+            val key = queryParameters["key"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val platform = queryParameters["platform"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+            val installationScript = fileProvider.getInstallationScript(key, Platform.valueOf(platform))
+            log.error("installation script=$installationScript")
+            call.respondText { installationScript }
+        }
+
+        get("/download-latest") {
+            val queryParameters = call.request.queryParameters
+            val key = queryParameters["key"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val platform = queryParameters["platform"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+            val (fileName, bytes) = fileProvider.getReleaseNameAndFile(key, Platform.valueOf(platform))
+
+            call.response.header(
+                HttpHeaders.ContentDisposition,
+                ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, fileName)
+                    .toString()
+            )
+            log.error("filename=$fileName")
+            call.respondBytes { bytes }
         }
 
         get("/proxy-port") {
-            val password = call.request.headers["password"] ?: return@get call.respond(HttpStatusCode.Unauthorized)
-            val proxyPort = proxyProvider.getProxyPortByPassword(password) ?: return@get call.respond(HttpStatusCode.NotFound)
-            call.respondText { proxyPort }
+            val key = call.request.headers["key"] ?: return@get call.respond(HttpStatusCode.Unauthorized)
+            val proxyPort = proxyProvider.getProxyPortByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
+            call.respondText { proxyPort.toString() }
         }
 
         // Static plugin. Try to access `/static/index.html`

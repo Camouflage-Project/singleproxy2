@@ -6,13 +6,13 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo) {
 
-    private val passwordToProxies = runBlocking { residentialProxyRepo.findAll() }
-        .groupBy { it.password }
+    private val keyToProxies = runBlocking { residentialProxyRepo.findAll() }
+        .groupBy { it.key }
         .mapValues { LinkedBlockingQueue(it.value) }
 
     @Synchronized
-    fun getProxyPortByPassword(password: String): String? {
-        val customerProxies = passwordToProxies[password]
+    fun getProxyPortByKey(key: String): Int? {
+        val customerProxies = keyToProxies[key]
         return customerProxies
             ?.remove()
             ?.also { customerProxies.add(it) }

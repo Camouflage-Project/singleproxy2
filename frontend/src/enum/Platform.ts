@@ -1,6 +1,6 @@
 export enum Platform {
-    Windows = "Windows",
-    Linux = "Linux",
-    MacOsAppleSilicon = "MacOsAppleSilicon",
-    MacOsIntel = "MacOsIntel"
+    WINDOWS = "WINDOWS",
+    LINUX = "LINUX",
+    MAC_OS_INTEL = "MAC_OS_INTEL",
+    MAC_OS_APPLE_SILICON = "MAC_OS_APPLE_SILICON"
 }

@@ -1,6 +1,7 @@
 package com.alealogic.plugins
 
 import com.alealogic.repository.ResidentialProxyRepo
+import com.alealogic.service.FileProvider
 import com.alealogic.service.PortProvider
 import com.alealogic.service.ResidentialProxyProvider
 import io.ktor.application.Application
@@ -14,6 +15,7 @@ val appModule = module {
     single<ResidentialProxyRepo>()
     single<ResidentialProxyProvider>()
     single<PortProvider>()
+    single<FileProvider>()
 }
 
 fun Application.configureDI() {

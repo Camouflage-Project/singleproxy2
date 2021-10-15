@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,8 +10,10 @@ import {Platform} from "../enum/Platform";
 
 export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
     const titleAndContent = getTitleAndContent(props.platform)
-    const baseUrl = `${window.location.protocol}//${window.location.host}`
-    const unixInstallCommand = `curl -s ${baseUrl}/install?id=${props.password} | sudo bash`
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`
+    const queryParams = `key=${props.nodeKey}&platform=${props.platform}`
+    const unixInstallCommand = `curl -s \"${baseUrl}:8080/install?${queryParams}\" | sudo bash`
+    const downloadLatestUrl = `${baseUrl}:8080/download-latest?${queryParams}`
 
     return (
         <div>
@@ -29,19 +31,14 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
                     {
                         titleAndContent.isUnix
                             ?
-                            <DialogContentText id="alert-dialog-description" sx={{marginTop: 3}}>
-                                <Typography component={'span'} sx={{
-                                    color: 'black',
-                                    background: '#eaedf',
-                                    fontSize: 18,
-                                    textAlign: 'center',
-                                }}>
+                            <DialogContentText id="alert-dialog-description" sx={{mt: 3}}>
+                                <Typography component={'span'} color="black">
                                     {unixInstallCommand}
                                 </Typography>
                             </DialogContentText>
                             :
-                            <DialogActions sx={{justifyContent: 'center'}}>
-                                <Button href={baseUrl + "/alealogic-release"} variant="outlined"
+                            <DialogActions sx={{justifyContent: 'center', mt: 1}}>
+                                <Button href={downloadLatestUrl} variant="outlined"
                                         onClick={props.handleClose}
                                         color="primary" autoFocus>
                                     Download
@@ -55,29 +52,29 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
 }
 
 const getTitleAndContent = (platform: Platform) => {
-    const unixInstallContent = "To install, just copy and paste the below code into a terminal window and press enter. Then, proceed to your dashboard."
-    const windowsInstallContent = "Click to download and then right click on the downloaded file and click Run as administrator."
+    const unixInstallContent = "To become a Camouflage residential proxy, copy and paste the below code into a terminal window and press enter:"
+    const windowsInstallContent = "To become a Camouflage residential proxy, download and then right click on the downloaded file and run as administrator."
 
     switch (platform) {
-        case Platform.Linux.valueOf():
+        case Platform.LINUX.valueOf():
             return {
                 title: "Linux installation",
                 content: unixInstallContent,
                 isUnix: true
             }
-        case Platform.MacOsAppleSilicon.valueOf():
+        case Platform.MAC_OS_APPLE_SILICON.valueOf():
             return {
                 title: "MacOS Apple Silicon installation",
                 content: unixInstallContent,
                 isUnix: true
             }
-        case Platform.MacOsIntel.valueOf():
+        case Platform.MAC_OS_INTEL.valueOf():
             return {
                 title: "MacOS Intel installation",
                 content: unixInstallContent,
                 isUnix: true
             }
-        case Platform.Windows.valueOf():
+        case Platform.WINDOWS.valueOf():
             return {
                 title: "Windows installation",
                 content: windowsInstallContent,
@@ -96,5 +93,5 @@ interface DownloadAlertDialogProps {
     platform: Platform,
     open: boolean,
     handleClose: () => void
-    password: string
+    nodeKey: string
 }

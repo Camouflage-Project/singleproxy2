@@ -1,7 +1,9 @@
 package com.alealogic.repository
 
+import com.alealogic.model.Platform
 import com.alealogic.model.ResidentialProxy
 import com.github.jasync.sql.db.Connection
+import com.github.jasync.sql.db.QueryResult
 import com.github.jasync.sql.db.RowData
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnectionBuilder
 import kotlinx.coroutines.future.await
@@ -25,13 +27,28 @@ suspend fun shutDownRepo(): Connection = connectionPool.disconnect().await()
 
 class ResidentialProxyRepo {
 
+    suspend fun save(proxy: ResidentialProxy): QueryResult =
+        connectionPool
+            .sendPreparedStatement(
+                "insert into residential_proxy(id, key, port, platform, created) values (?, ?, ?, ?, ?)",
+                listOf(proxy.id, proxy.key, proxy.port, proxy.platform, proxy.created)
+            )
+            .await()
+
+
     suspend fun findAll() =
         connectionPool
-            .sendPreparedStatement(query = "select id, password, port, created from residential_proxy;")
+            .sendPreparedStatement("select id, key, port, platform, created from residential_proxy;")
             .await()
             .rows
             .map { it.toResidentialProxy() }
 
     private fun RowData.toResidentialProxy() =
-        ResidentialProxy(this[0] as UUID, this[1] as String, this[2] as String, this[3] as LocalDateTime)
+        ResidentialProxy(
+            this[0] as UUID,
+            this[1] as String,
+            this[2] as Int,
+            Platform.valueOf(this[3] as String),
+            this[4] as LocalDateTime
+        )
 }

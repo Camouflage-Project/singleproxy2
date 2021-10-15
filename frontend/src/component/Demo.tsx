@@ -8,9 +8,7 @@ import Box from '@mui/material/Box';
 import ScienceIcon from '@mui/icons-material/Science';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import axios from "axios";
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {LinearProgress} from "@mui/material";
 import DownloadAlertDialog from "./DownloadAlertDialog";
 import {Platform} from "../enum/Platform";
 
@@ -39,14 +37,12 @@ const theme = createTheme({
 
 export default function Demo() {
     const [textFieldError, setTextFieldError] = useState(false)
-    const [password, setPassword] = useState("")
-    const [spinnerActive, setSpinnerActive] = useState(false)
+    const [key, setKey] = useState("")
     const [open, setOpen] = React.useState(false);
-    const [platform, setPlatform] = React.useState(Platform.Linux)
-    let lastSubmittedPassword: string;
+    const [platform, setPlatform] = React.useState(Platform.LINUX)
 
     const openAlertDialog = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
-        if (password.length === 0) {
+        if (key.length === 0) {
             setTextFieldError(true)
             return
         }
@@ -61,33 +57,15 @@ export default function Demo() {
     };
 
     const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-        setPassword(e.target.value)
+        setKey(e.target.value)
         if (textFieldError) setTextFieldError(false)
     }
 
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
-        if (password.length === 0) {
-            setTextFieldError(true)
-            return
-        }
-
-        setSpinnerActive(true)
-
-        axios.post(
-            "http://localhost:8080/download",
-            {
-                password: password,
-                platform: e.currentTarget.id
-            }).then(_ => setSpinnerActive(false))
-
-        lastSubmittedPassword = password
-    }
-
     const platformDetails = [
-        {platform: Platform.Linux, name: "Linux"},
-        {platform: Platform.Windows, name: "Windows"},
-        {platform: Platform.MacOsIntel, name: "macOS - Intel"},
-        {platform: Platform.MacOsAppleSilicon, name: "macOS - Apple Silicon"}
+        {platform: Platform.LINUX, name: "Linux"},
+        {platform: Platform.WINDOWS, name: "Windows"},
+        {platform: Platform.MAC_OS_INTEL, name: "macOS - Intel"},
+        {platform: Platform.MAC_OS_APPLE_SILICON, name: "macOS - Apple Silicon"}
     ]
 
     return (
@@ -96,7 +74,7 @@ export default function Demo() {
                 <CssBaseline/>
                 <Box
                     sx={{
-                        marginTop: 8,
+                        mt: 8,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -105,20 +83,20 @@ export default function Demo() {
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <ScienceIcon/>
                     </Avatar>
-                    <Typography component="h1" variant="h5">
+                    <Typography variant="h4">
                         Camouflage Demo
                     </Typography>
                     <Box sx={{mt: 1}}>
                         <TextField
-                            value={password}
+                            value={key}
                             onChange={handleTyping}
                             error={textFieldError}
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
-                            label="Password"
-                            id="password"
+                            name="key"
+                            label="Key"
+                            id="key"
                         />
                         {platformDetails.map((p, i) =>
                             <Button
@@ -127,15 +105,14 @@ export default function Demo() {
                                 id={p.platform.toString()}
                                 fullWidth
                                 variant="contained"
-                                sx={{mt: 3, mb: 2}}
+                                sx={{mt: 5}}
                             >
                                 {p.name}
                             </Button>)}
-                        {spinnerActive && <LinearProgress color="secondary" sx={{marginTop: 3}}/>}
                     </Box>
                 </Box>
                 <DownloadAlertDialog platform={platform} open={open} handleClose={closeAlertDialog}
-                                     password={password}/>
+                                     nodeKey={key}/>
                 <Copyright sx={{mt: 8, mb: 4}}/>
             </Container>
         </ThemeProvider>
