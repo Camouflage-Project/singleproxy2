@@ -16,11 +16,12 @@ import java.util.concurrent.TimeUnit
 
 class FileProvider(
     private val portProvider: PortProvider,
-    private val residentialProxyRepo: ResidentialProxyRepo
+    private val residentialProxyRepo: ResidentialProxyRepo,
+    private val configProvider: ConfigProvider
 ) {
 
-    private val currentRelease = "ResidentialProxyClient_1_0_0"
-    private val baseUrl = "http://localhost:8080"
+    private val baseUrl = configProvider.getBaseUrl()
+    private val currentRelease = configProvider.getReleaseName()
     private val goCommand = "go"
     private val desktopClientDirectory = "/home/luka/go/src/desktopClient/cmd/desktopClient/"
 
@@ -31,7 +32,12 @@ class FileProvider(
         val desktopClientKey = UUID.randomUUID().toString()
         val nextAvailablePort = portProvider.findNextAvailablePort()
         val ldflags =
-            "-X desktopClient/config.Key=$desktopClientKey -X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort"
+            "-X desktopClient/config.Key=$desktopClientKey " +
+                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                "-X desktopClient/config.BaseUrl=$baseUrl " +
+                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
+                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         residentialProxyRepo.save(
             ResidentialProxy(

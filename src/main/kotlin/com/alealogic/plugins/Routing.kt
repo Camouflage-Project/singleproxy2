@@ -1,6 +1,7 @@
 package com.alealogic.plugins
 
 import com.alealogic.model.Platform
+import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
 import com.alealogic.service.ResidentialProxyProvider
 import io.ktor.application.Application
@@ -68,6 +69,7 @@ fun Application.configureRouting() {
     routing {
         val fileProvider by inject<FileProvider>()
         val proxyProvider by inject<ResidentialProxyProvider>()
+        val configProvider by inject<ConfigProvider>()
 
         authenticate("myauth1") {
             get("/protected/route/basic") {
@@ -112,6 +114,26 @@ fun Application.configureRouting() {
             val key = call.request.headers["key"] ?: return@get call.respond(HttpStatusCode.Unauthorized)
             val proxyPort = proxyProvider.getProxyPortByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
             call.respondText { proxyPort.toString() }
+        }
+
+        post("/register-desktop-client") {
+            call.respond(HttpStatusCode.OK)
+        }
+
+        post("/script") {
+            call.respondText { "" }
+        }
+
+        post("/latest-version") {
+            call.respondText { configProvider.getReleaseName() }
+        }
+
+        post("/heartbeat") {
+            call.respond(HttpStatusCode.OK)
+        }
+
+        get("/test") {
+            call.respond(configProvider.getBaseUrl())
         }
 
         // Static plugin. Try to access `/static/index.html`

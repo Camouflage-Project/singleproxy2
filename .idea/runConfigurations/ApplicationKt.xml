@@ -10,6 +10,13 @@
     <option name="shortenCommandLine" value="NONE" />
     <option name="vmParameters" value="" />
     <option name="workingDirectory" value="" />
+    <envs>
+      <env name="BASE_URL" value="http://localhost:8080" />
+      <env name="RELEASE_NAME" value="ResidentialProxyClient_1_0_0" />
+      <env name="NODE_IP" value="116.203.232.229" />
+      <env name="NODE_LIMITED_USER_NAME" value="limiteduser" />
+      <env name="NODE_LIMITED_USER_PASSWORD" value="8sEeV7Q$hELwaYMPlX1A#dAbSP1M^eNVP" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

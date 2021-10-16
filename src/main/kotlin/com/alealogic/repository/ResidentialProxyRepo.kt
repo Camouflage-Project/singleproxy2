@@ -35,7 +35,6 @@ class ResidentialProxyRepo {
             )
             .await()
 
-
     suspend fun findAll() =
         connectionPool
             .sendPreparedStatement("select id, key, port, platform, created from residential_proxy;")

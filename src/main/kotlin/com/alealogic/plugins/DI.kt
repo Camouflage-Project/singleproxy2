@@ -1,6 +1,7 @@
 package com.alealogic.plugins
 
 import com.alealogic.repository.ResidentialProxyRepo
+import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
 import com.alealogic.service.PortProvider
 import com.alealogic.service.ResidentialProxyProvider
@@ -16,6 +17,7 @@ val appModule = module {
     single<ResidentialProxyProvider>()
     single<PortProvider>()
     single<FileProvider>()
+    single<ConfigProvider>()
 }
 
 fun Application.configureDI() {
