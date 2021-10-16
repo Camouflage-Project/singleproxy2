@@ -3,7 +3,7 @@ package com.alealogic.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DownloadRequest(
-    val key: String,
-    val platform: String
+data class HeartbeatRequest(
+    val clientId: String,
+    val ip: String
 )

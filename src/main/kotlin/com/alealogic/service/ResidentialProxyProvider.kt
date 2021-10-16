@@ -1,12 +1,13 @@
 package com.alealogic.service
 
-import com.alealogic.repository.ResidentialProxyRepo
+import com.alealogic.domain.ResidentialProxy
 import kotlinx.coroutines.runBlocking
+import java.util.UUID
 import java.util.concurrent.LinkedBlockingQueue
 
-class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo) {
+class ResidentialProxyProvider(private val residentialProxyService: ResidentialProxyService) {
 
-    private val keyToProxies = runBlocking { residentialProxyRepo.findAll() }
+    private val keyToProxies = runBlocking { residentialProxyService.findAll() }
         .groupBy { it.key }
         .mapValues { LinkedBlockingQueue(it.value) }
 
@@ -18,4 +19,11 @@ class ResidentialProxyProvider(residentialProxyRepo: ResidentialProxyRepo) {
             ?.also { customerProxies.add(it) }
             ?.port
     }
+
+    suspend fun addNewProxy(clientId: UUID) = addProxyToQueue(residentialProxyService.findById(clientId))
+
+    @Synchronized
+    private fun addProxyToQueue(residentialProxy: ResidentialProxy) =
+        keyToProxies[residentialProxy.key]?.add(residentialProxy)
+
 }

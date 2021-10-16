@@ -1,9 +1,12 @@
 package com.alealogic.plugins
 
-import com.alealogic.model.Platform
+import com.alealogic.domain.Platform
+import com.alealogic.model.HeartbeatRequest
+import com.alealogic.model.RegistrationRequest
 import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
 import com.alealogic.service.ResidentialProxyProvider
+import com.alealogic.service.ResidentialProxyService
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -20,8 +23,10 @@ import io.ktor.http.ContentDisposition
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
+import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
@@ -30,6 +35,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
 import org.koin.ktor.ext.inject
+import java.util.UUID
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
@@ -68,8 +74,8 @@ fun Application.configureRouting() {
 
     routing {
         val fileProvider by inject<FileProvider>()
-        val proxyProvider by inject<ResidentialProxyProvider>()
         val configProvider by inject<ConfigProvider>()
+        val proxyService by inject<ResidentialProxyService>()
 
         authenticate("myauth1") {
             get("/protected/route/basic") {
@@ -112,11 +118,16 @@ fun Application.configureRouting() {
 
         get("/proxy-port") {
             val key = call.request.headers["key"] ?: return@get call.respond(HttpStatusCode.Unauthorized)
-            val proxyPort = proxyProvider.getProxyPortByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
+            val proxyPort = proxyService.getProxyPortByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
             call.respondText { proxyPort.toString() }
         }
 
         post("/register-desktop-client") {
+            val registrationRequest = call.receive<RegistrationRequest>()
+            proxyService.register(
+                UUID.fromString(registrationRequest.clientId)
+            )
+
             call.respond(HttpStatusCode.OK)
         }
 
@@ -129,6 +140,12 @@ fun Application.configureRouting() {
         }
 
         post("/heartbeat") {
+            val heartbeatRequest = call.receive<HeartbeatRequest>()
+            proxyService.updateHeartbeat(
+                UUID.fromString(heartbeatRequest.clientId),
+                heartbeatRequest.ip
+            )
+
             call.respond(HttpStatusCode.OK)
         }
 
@@ -136,9 +153,9 @@ fun Application.configureRouting() {
             call.respond(configProvider.getBaseUrl())
         }
 
-        // Static plugin. Try to access `/static/index.html`
-        static("/static") {
-            resources("static")
+        static("/") {
+            resources("frontend")
+            defaultResource("frontend/index.html")
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -12,7 +12,7 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
     const titleAndContent = getTitleAndContent(props.platform)
     const baseUrl = `${window.location.protocol}//${window.location.hostname}`
     const queryParams = `key=${props.nodeKey}&platform=${props.platform}`
-    const unixInstallCommand = `curl -s \"${baseUrl}:8080/install?${queryParams}\" | sudo bash`
+    const unixInstallCommand = `curl -s "${baseUrl}:8080/install?${queryParams}" | sudo bash`
     const downloadLatestUrl = `${baseUrl}:8080/download-latest?${queryParams}`
 
     return (

@@ -1,8 +1,6 @@
 package com.alealogic.service
 
-import com.alealogic.model.Platform
-import com.alealogic.model.ResidentialProxy
-import com.alealogic.repository.ResidentialProxyRepo
+import com.alealogic.domain.Platform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.Logger
@@ -16,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class FileProvider(
     private val portProvider: PortProvider,
-    private val residentialProxyRepo: ResidentialProxyRepo,
+    private val residentialProxyService: ResidentialProxyService,
     private val configProvider: ConfigProvider
 ) {
 
@@ -29,23 +27,18 @@ class FileProvider(
         .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -s -o $it && chmod +x $it && ./$it" }
 
     suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, ByteArray> {
-        val desktopClientKey = UUID.randomUUID().toString()
+        val clientId = UUID.randomUUID()
         val nextAvailablePort = portProvider.findNextAvailablePort()
-        val ldflags =
-            "-X desktopClient/config.Key=$desktopClientKey " +
-                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
-                "-X desktopClient/config.BaseUrl=$baseUrl " +
-                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
-                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
-        residentialProxyRepo.save(
-            ResidentialProxy(
-                key = key,
-                port = nextAvailablePort,
-                platform = platform,
-            )
-        )
+        residentialProxyService.create(clientId, key, nextAvailablePort, platform)
+
+        val ldflags =
+            "-X desktopClient/config.ClientId=$clientId " +
+                    "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                    "-X desktopClient/config.BaseUrl=$baseUrl " +
+                    "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                    "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
+                    "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
         val byteArray =

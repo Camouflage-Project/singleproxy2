@@ -5,6 +5,7 @@ import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
 import com.alealogic.service.PortProvider
 import com.alealogic.service.ResidentialProxyProvider
+import com.alealogic.service.ResidentialProxyService
 import io.ktor.application.Application
 import io.ktor.application.install
 import org.koin.dsl.module
@@ -18,6 +19,7 @@ val appModule = module {
     single<PortProvider>()
     single<FileProvider>()
     single<ConfigProvider>()
+    single<ResidentialProxyService>()
 }
 
 fun Application.configureDI() {

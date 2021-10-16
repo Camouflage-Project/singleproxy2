@@ -1,4 +1,4 @@
-package com.alealogic.model
+package com.alealogic.domain
 
 enum class Platform {
     WINDOWS,

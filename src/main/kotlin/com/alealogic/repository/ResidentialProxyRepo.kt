@@ -1,7 +1,7 @@
 package com.alealogic.repository
 
-import com.alealogic.model.Platform
-import com.alealogic.model.ResidentialProxy
+import com.alealogic.domain.Platform
+import com.alealogic.domain.ResidentialProxy
 import com.github.jasync.sql.db.Connection
 import com.github.jasync.sql.db.QueryResult
 import com.github.jasync.sql.db.RowData
@@ -30,9 +30,39 @@ class ResidentialProxyRepo {
     suspend fun save(proxy: ResidentialProxy): QueryResult =
         connectionPool
             .sendPreparedStatement(
-                "insert into residential_proxy(id, key, port, platform, created) values (?, ?, ?, ?, ?)",
-                listOf(proxy.id, proxy.key, proxy.port, proxy.platform, proxy.created)
+                "INSERT INTO residential_proxy" +
+                        "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                listOf(
+                    proxy.id,
+                    proxy.key,
+                    proxy.port,
+                    proxy.platform,
+                    proxy.registered,
+                    proxy.ipAddress,
+                    proxy.lastHeartbeat, proxy.created
+                )
             )
+            .await()
+
+    suspend fun findById(id: UUID): ResidentialProxy =
+        connectionPool
+            .sendPreparedStatement("SELECT * FROM residential_proxy where id = ?", listOf(id))
+            .await()
+            .rows
+            .map { it.toResidentialProxy() }
+            .first()
+
+    suspend fun register(id: UUID): QueryResult =
+        connectionPool
+            .sendPreparedStatement("UPDATE residential_proxy SET registered = true WHERE id = ?", listOf(id))
+            .await()
+
+
+    suspend fun updateHeartbeat(id: UUID, ipAddress: String): QueryResult =
+        connectionPool
+            .sendPreparedStatement("UPDATE residential_proxy SET ip_address = ?, last_heartbeat WHERE id = ?",
+                listOf(ipAddress, LocalDateTime.now(), id))
             .await()
 
     suspend fun findAll() =
@@ -48,6 +78,9 @@ class ResidentialProxyRepo {
             this[1] as String,
             this[2] as Int,
             Platform.valueOf(this[3] as String),
-            this[4] as LocalDateTime
+            this[4] as Boolean,
+            this[5] as String,
+            this[6] as LocalDateTime,
+            this[7] as LocalDateTime
         )
 }
