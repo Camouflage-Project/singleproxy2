@@ -20,8 +20,8 @@ class FileProvider(
 
     private val baseUrl = configProvider.getBaseUrl()
     private val currentRelease = configProvider.getReleaseName()
+    private val desktopClientDirectory = configProvider.getDesktopClientDirectory()
     private val goCommand = "go"
-    private val desktopClientDirectory = "/home/luka/go/src/desktopClient/cmd/desktopClient/"
 
     fun getInstallationScript(key: String, platform: Platform): String = currentRelease
         .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -s -o $it && chmod +x $it && ./$it" }

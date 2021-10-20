@@ -16,6 +16,7 @@
       <env name="NODE_IP" value="116.203.232.229" />
       <env name="NODE_LIMITED_USER_NAME" value="limiteduser" />
       <env name="NODE_LIMITED_USER_PASSWORD" value="8sEeV7Q$hELwaYMPlX1A#dAbSP1M^eNVP" />
+      <env name="DESKTOP_CLIENT_DIRECTORY" value="$USER_HOME$/go/src/desktopClient/cmd/desktopClient/" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />

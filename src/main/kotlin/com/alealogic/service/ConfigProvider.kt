@@ -12,4 +12,5 @@ class ConfigProvider {
     fun getNodeIp(): String = config.getString("nodeIp")
     fun getNodeLimitedUsername(): String = config.getString("nodeLimitedUsername")
     fun getNodeLimitedUserPassword(): String = config.getString("nodeLimitedUserPassword")
+    fun getDesktopClientDirectory(): String = config.getString("desktopClientDirectory")
 }
