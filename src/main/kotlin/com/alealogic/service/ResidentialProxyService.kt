@@ -20,10 +20,6 @@ class ResidentialProxyService(
             )
         )
 
-    suspend fun findById(clientId: UUID) = proxyRepo.findById(clientId)
-
-    suspend fun findAll() = proxyRepo.findAll()
-
     suspend fun register(clientId: UUID) = proxyRepo.register(clientId)
         .also { proxyProvider.addNewProxy(clientId) }
 

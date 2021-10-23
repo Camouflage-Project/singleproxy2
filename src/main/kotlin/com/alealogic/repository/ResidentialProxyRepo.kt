@@ -61,13 +61,15 @@ class ResidentialProxyRepo {
 
     suspend fun updateHeartbeat(id: UUID, ipAddress: String): QueryResult =
         connectionPool
-            .sendPreparedStatement("UPDATE residential_proxy SET ip_address = ?, last_heartbeat WHERE id = ?",
-                listOf(ipAddress, LocalDateTime.now(), id))
+            .sendPreparedStatement(
+                "UPDATE residential_proxy SET ip_address = ?, last_heartbeat WHERE id = ?",
+                listOf(ipAddress, LocalDateTime.now(), id)
+            )
             .await()
 
     suspend fun findAll() =
         connectionPool
-            .sendPreparedStatement("select id, key, port, platform, created from residential_proxy;")
+            .sendPreparedStatement("SELECT * FROM residential_proxy")
             .await()
             .rows
             .map { it.toResidentialProxy() }
@@ -79,8 +81,8 @@ class ResidentialProxyRepo {
             this[2] as Int,
             Platform.valueOf(this[3] as String),
             this[4] as Boolean,
-            this[5] as String,
-            this[6] as LocalDateTime,
+            this[5] as String?,
+            this[6] as LocalDateTime?,
             this[7] as LocalDateTime
         )
 }
