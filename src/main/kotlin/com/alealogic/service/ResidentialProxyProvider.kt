@@ -26,5 +26,4 @@ class ResidentialProxyProvider(private val residentialProxyRepo: ResidentialProx
     @Synchronized
     private fun addProxyToQueue(residentialProxy: ResidentialProxy) =
         keyToProxies[residentialProxy.key]?.add(residentialProxy)
-
 }

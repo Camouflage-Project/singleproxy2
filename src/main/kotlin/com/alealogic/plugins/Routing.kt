@@ -5,7 +5,6 @@ import com.alealogic.model.HeartbeatRequest
 import com.alealogic.model.RegistrationRequest
 import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
-import com.alealogic.service.ResidentialProxyProvider
 import com.alealogic.service.ResidentialProxyService
 import io.ktor.application.Application
 import io.ktor.application.call

@@ -34,11 +34,11 @@ class FileProvider(
 
         val ldflags =
             "-X desktopClient/config.ClientId=$clientId " +
-                    "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
-                    "-X desktopClient/config.BaseUrl=$baseUrl " +
-                    "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                    "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
-                    "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
+                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                "-X desktopClient/config.BaseUrl=$baseUrl " +
+                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
+                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
         val byteArray =
