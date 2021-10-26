@@ -37,7 +37,7 @@ class FileProvider(
                 "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
                 "-X desktopClient/config.BaseUrl=$baseUrl " +
                 "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                "-X desktopClient/config.NodeLimitedUsername=${configProvider.getNodeLimitedUsername()} " +
+                "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
                 "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
