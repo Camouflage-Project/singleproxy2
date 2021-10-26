@@ -6,21 +6,24 @@ import com.github.jasync.sql.db.Connection
 import com.github.jasync.sql.db.QueryResult
 import com.github.jasync.sql.db.RowData
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnectionBuilder
+import com.typesafe.config.ConfigFactory
 import kotlinx.coroutines.future.await
 import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val connectionPool = PostgreSQLConnectionBuilder.createConnectionPool {
-    host = "localhost"
-    port = 5432
-    username = "postgres"
-    password = "postgres"
-    database = "postgres"
-    maxActiveConnections = 100
-    maxIdleTime = TimeUnit.MINUTES.toMillis(15)
-    maxPendingQueries = 10_000
-    connectionValidationInterval = TimeUnit.SECONDS.toMillis(30)
+private val connectionPool = ConfigFactory.load().let {
+    PostgreSQLConnectionBuilder.createConnectionPool {
+        host = it.getString("db.host")
+        port = it.getInt("db.port")
+        database = it.getString("db.database")
+        username = it.getString("db.username")
+        password = it.getString("db.password")
+        maxActiveConnections = 100
+        maxIdleTime = TimeUnit.MINUTES.toMillis(15)
+        maxPendingQueries = 10_000
+        connectionValidationInterval = TimeUnit.SECONDS.toMillis(30)
+    }
 }.also { it.connect().get() }
 
 suspend fun shutDownRepo(): Connection = connectionPool.disconnect().await()
@@ -31,8 +34,8 @@ class ResidentialProxyRepo {
         connectionPool
             .sendPreparedStatement(
                 "INSERT INTO residential_proxy" +
-                    "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 listOf(
                     proxy.id,
                     proxy.key,

@@ -148,10 +148,6 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
-        get("/test") {
-            call.respond(configProvider.getBaseUrl())
-        }
-
         static("/") {
             resources("frontend")
             defaultResource("frontend/index.html")

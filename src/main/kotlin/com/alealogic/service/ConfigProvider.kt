@@ -9,8 +9,8 @@ class ConfigProvider {
 
     fun getBaseUrl(): String = config.getString("baseUrl")
     fun getReleaseName(): String = config.getString("releaseName")
-    fun getNodeIp(): String = config.getString("nodeIp")
-    fun getNodeLimitedUsername(): String = config.getString("nodeLimitedUserName")
-    fun getNodeLimitedUserPassword(): String = config.getString("nodeLimitedUserPassword")
+    fun getNodeIp(): String = config.getString("node.ip")
+    fun getNodeLimitedUsername(): String = config.getString("node.limitedUser.name")
+    fun getNodeLimitedUserPassword(): String = config.getString("node.limitedUser.password")
     fun getDesktopClientDirectory(): String = config.getString("desktopClientDirectory")
 }
