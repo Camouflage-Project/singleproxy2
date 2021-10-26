@@ -64,7 +64,7 @@ class ResidentialProxyRepo {
     suspend fun updateHeartbeat(id: UUID, ipAddress: String): QueryResult =
         connectionPool
             .sendPreparedStatement(
-                "UPDATE residential_proxy SET ip_address = ?, last_heartbeat WHERE id = ?",
+                "UPDATE residential_proxy SET ip_address = ?, last_heartbeat = ? WHERE id = ?",
                 listOf(ipAddress, LocalDateTime.now(), id)
             )
             .await()

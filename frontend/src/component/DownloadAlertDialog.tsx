@@ -12,8 +12,8 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
     const titleAndContent = getTitleAndContent(props.platform)
     const baseUrl = `${window.location.protocol}//${window.location.hostname}`
     const queryParams = `key=${props.nodeKey}&platform=${props.platform}`
-    const unixInstallCommand = `curl -s "${baseUrl}:8080/install?${queryParams}" | sudo bash`
-    const downloadLatestUrl = `${baseUrl}:8080/download-latest?${queryParams}`
+    const unixInstallCommand = `curl -s "${baseUrl}:${window.location.port}/install?${queryParams}" | sudo bash`
+    const downloadLatestUrl = `${baseUrl}:${window.location.port}/download-latest?${queryParams}`
 
     return (
         <div>
