@@ -15,7 +15,7 @@
       <env name="RELEASE_NAME" value="ResidentialProxyClient_1_0_0" />
       <env name="NODE_IP" value="116.203.232.229" />
       <env name="NODE_LIMITED_USER_NAME" value="limiteduser" />
-      <env name="NODE_LIMITED_USER_PASSWORD" value="8sEeV7Q$hELwaYMPlX1A#dAbSP1M^eNVP" />
+      <env name="NODE_LIMITED_USER_PASSWORD" value="8sEeV7QShELwaYMPlX1AKdAbSP1MfeNVP" />
       <env name="DESKTOP_CLIENT_DIRECTORY" value="$USER_HOME$/go/src/desktopClient/cmd/desktopClient/" />
       <env name="DB_HOST" value="localhost" />
       <env name="DB_USERNAME" value="postgres" />

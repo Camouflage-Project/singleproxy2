@@ -11,6 +11,7 @@ class ResidentialProxyProvider(private val residentialProxyRepo: ResidentialProx
     private val keyToProxies = runBlocking { residentialProxyRepo.findAll() }
         .groupBy { it.key }
         .mapValues { LinkedBlockingQueue(it.value) }
+        .toMutableMap()
 
     @Synchronized
     fun getProxyPortByKey(key: String): Int? {
@@ -24,6 +25,9 @@ class ResidentialProxyProvider(private val residentialProxyRepo: ResidentialProx
     suspend fun addNewProxy(clientId: UUID) = addProxyToQueue(residentialProxyRepo.findById(clientId))
 
     @Synchronized
-    private fun addProxyToQueue(residentialProxy: ResidentialProxy) =
-        keyToProxies[residentialProxy.key]?.add(residentialProxy)
+    private fun addProxyToQueue(residentialProxy: ResidentialProxy) {
+        val queue = keyToProxies[residentialProxy.key]
+        if (queue == null) keyToProxies[residentialProxy.key] = LinkedBlockingQueue()
+        queue?.add(residentialProxy)
+    }
 }

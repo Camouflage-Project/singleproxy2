@@ -38,7 +38,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }
 
-tasks{
+tasks {
     shadowJar {
         manifest {
             attributes(Pair("Main-Class", "com.alealogic.Application"))
