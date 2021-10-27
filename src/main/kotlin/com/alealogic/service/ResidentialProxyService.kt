@@ -26,5 +26,5 @@ class ResidentialProxyService(
     suspend fun updateHeartbeat(clientId: UUID, ipAddress: String) =
         proxyRepo.updateHeartbeat(clientId, ipAddress)
 
-    fun getProxyPortByKey(key: String) = proxyProvider.getProxyPortByKey(key)
+    fun getProxyByKey(key: String) = proxyProvider.getProxyByKey(key)
 }

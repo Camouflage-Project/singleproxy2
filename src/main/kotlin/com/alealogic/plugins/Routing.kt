@@ -2,6 +2,7 @@ package com.alealogic.plugins
 
 import com.alealogic.domain.Platform
 import com.alealogic.model.HeartbeatRequest
+import com.alealogic.model.ProxyDescriptorResponse
 import com.alealogic.model.RegistrationRequest
 import com.alealogic.service.ConfigProvider
 import com.alealogic.service.FileProvider
@@ -115,10 +116,12 @@ fun Application.configureRouting() {
             call.respondBytes { bytes }
         }
 
-        get("/proxy-port") {
+        get("/proxy-descriptor") {
             val key = call.request.headers["key"] ?: return@get call.respond(HttpStatusCode.Unauthorized)
-            val proxyPort = proxyService.getProxyPortByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
-            call.respondText { proxyPort.toString() }
+            val proxy = proxyService.getProxyByKey(key) ?: return@get call.respond(HttpStatusCode.NotFound)
+            call.respond(
+                ProxyDescriptorResponse("localhost", proxy.port, proxy.id.toString())
+            )
         }
 
         post("/register-desktop-client") {

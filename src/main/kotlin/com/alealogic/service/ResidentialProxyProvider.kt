@@ -14,12 +14,11 @@ class ResidentialProxyProvider(private val residentialProxyRepo: ResidentialProx
         .toMutableMap()
 
     @Synchronized
-    fun getProxyPortByKey(key: String): Int? {
+    fun getProxyByKey(key: String): ResidentialProxy? {
         val customerProxies = keyToProxies[key]
         return customerProxies
             ?.remove()
             ?.also { customerProxies.add(it) }
-            ?.port
     }
 
     suspend fun addNewProxy(clientId: UUID) = addProxyToQueue(residentialProxyRepo.findById(clientId))
