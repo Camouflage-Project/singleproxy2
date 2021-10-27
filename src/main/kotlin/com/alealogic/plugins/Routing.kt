@@ -30,6 +30,7 @@ import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
+import io.ktor.response.respondFile
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -105,7 +106,7 @@ fun Application.configureRouting() {
             val key = queryParameters["key"] ?: return@get call.respond(HttpStatusCode.BadRequest)
             val platform = queryParameters["platform"] ?: return@get call.respond(HttpStatusCode.BadRequest)
 
-            val (fileName, bytes) = fileProvider.getReleaseNameAndFile(key, Platform.valueOf(platform))
+            val (fileName, file) = fileProvider.getReleaseNameAndFile(key, Platform.valueOf(platform))
 
             call.response.header(
                 HttpHeaders.ContentDisposition,
@@ -113,7 +114,7 @@ fun Application.configureRouting() {
                     .toString()
             )
             log.info("filename={}", fileName)
-            call.respondBytes { bytes }
+            call.respondFile(file)
         }
 
         get("/proxy-descriptor") {

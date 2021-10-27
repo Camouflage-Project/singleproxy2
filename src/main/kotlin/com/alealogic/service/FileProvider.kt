@@ -7,8 +7,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -26,7 +24,7 @@ class FileProvider(
     fun getInstallationScript(key: String, platform: Platform): String = currentRelease
         .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -v -o $it && chmod +x $it && ./$it" }
 
-    suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, ByteArray> {
+    suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, File> {
         val clientId = UUID.randomUUID()
         val nextAvailablePort = portProvider.findNextAvailablePort()
 
@@ -41,10 +39,10 @@ class FileProvider(
                 "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
-        val byteArray =
-            withContext(Dispatchers.IO) { Files.readAllBytes(Paths.get(desktopClientDirectory + releaseName)) }
+        val file =
+            withContext(Dispatchers.IO) { File(desktopClientDirectory + releaseName) }
 
-        return releaseName to byteArray
+        return releaseName to file
     }
 
     private fun buildDesktopClient(ldflags: String, platform: Platform): String {
