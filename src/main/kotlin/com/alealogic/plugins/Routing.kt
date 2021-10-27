@@ -95,7 +95,7 @@ fun Application.configureRouting() {
             val platform = queryParameters["platform"] ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             val installationScript = fileProvider.getInstallationScript(key, Platform.valueOf(platform))
-            log.error("installation script=$installationScript")
+            log.info("installation script=$installationScript")
             call.respondText { installationScript }
         }
 
@@ -111,7 +111,7 @@ fun Application.configureRouting() {
                 ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, fileName)
                     .toString()
             )
-            log.error("filename=$fileName")
+            log.info("filename=$fileName")
             call.respondBytes { bytes }
         }
 
@@ -146,10 +146,6 @@ fun Application.configureRouting() {
             )
 
             call.respond(HttpStatusCode.OK)
-        }
-
-        get("/test") {
-            call.respondText { configProvider.getNodeLimitedUserPassword() }
         }
 
         static("/") {

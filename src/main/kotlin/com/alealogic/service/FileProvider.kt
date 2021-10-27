@@ -24,7 +24,7 @@ class FileProvider(
     private val goCommand = "go"
 
     fun getInstallationScript(key: String, platform: Platform): String = currentRelease
-        .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -s -o $it && chmod +x $it && ./$it" }
+        .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -v -o $it && chmod +x $it && ./$it" }
 
     suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, ByteArray> {
         val clientId = UUID.randomUUID()
