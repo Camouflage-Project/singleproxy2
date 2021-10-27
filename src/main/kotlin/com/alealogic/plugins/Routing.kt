@@ -130,7 +130,7 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
-        post("/script") {
+        get("/script") {
             call.respondText { "" }
         }
 
@@ -146,6 +146,10 @@ fun Application.configureRouting() {
             )
 
             call.respond(HttpStatusCode.OK)
+        }
+
+        get("/test") {
+            call.respondText { configProvider.getNodeLimitedUserPassword() }
         }
 
         static("/") {
