@@ -19,6 +19,7 @@ import io.ktor.auth.form
 import io.ktor.auth.principal
 import io.ktor.features.AutoHeadResponse
 import io.ktor.features.CORS
+import io.ktor.features.HttpsRedirect
 import io.ktor.http.ContentDisposition
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -40,6 +41,7 @@ import java.util.UUID
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
+    install(HttpsRedirect)
     install(CORS) {
         method(HttpMethod.Options)
         method(HttpMethod.Put)
