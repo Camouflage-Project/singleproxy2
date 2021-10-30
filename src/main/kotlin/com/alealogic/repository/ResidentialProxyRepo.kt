@@ -76,6 +76,13 @@ class ResidentialProxyRepo {
             .rows
             .map { it.toResidentialProxy() }
 
+    suspend fun findAllByKey(key: String) =
+        connectionPool
+            .sendPreparedStatement("SELECT * FROM residential_proxy WHERE key = ?", listOf(key))
+            .await()
+            .rows
+            .map { it.toResidentialProxy() }
+
     private fun RowData.toResidentialProxy() =
         ResidentialProxy(
             this[0] as UUID,

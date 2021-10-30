@@ -22,6 +22,7 @@
       <env name="DB_PORT" value="5432" />
       <env name="DB_DATABASE" value="postgres" />
       <env name="DB_PASSWORD" value="postgres" />
+      <env name="PORT" value="8080" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />

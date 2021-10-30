@@ -30,7 +30,6 @@ import io.ktor.http.content.static
 import io.ktor.request.receive
 import io.ktor.response.header
 import io.ktor.response.respond
-import io.ktor.response.respondBytes
 import io.ktor.response.respondFile
 import io.ktor.response.respondText
 import io.ktor.routing.get
@@ -43,10 +42,9 @@ fun Application.configureRouting() {
     install(AutoHeadResponse)
     install(HttpsRedirect)
     install(CORS) {
+        header("key")
         method(HttpMethod.Options)
-        method(HttpMethod.Put)
-        method(HttpMethod.Delete)
-        method(HttpMethod.Patch)
+        method(HttpMethod.Get)
         header(HttpHeaders.Authorization)
         header(HttpHeaders.ContentType)
         allowCredentials = true
@@ -101,6 +99,13 @@ fun Application.configureRouting() {
             val installationScript = fileProvider.getInstallationScript(key, Platform.valueOf(platform))
             log.info("installation script={}", installationScript)
             call.respondText { installationScript }
+        }
+
+        get("/proxies") {
+            val key = call.request.headers["key"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val proxies = proxyService.getResidentialProxyResponseByKey(key)
+
+            call.respond(proxies)
         }
 
         get("/download-latest") {

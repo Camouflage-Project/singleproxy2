@@ -11,6 +11,7 @@ import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import DownloadAlertDialog from "./DownloadAlertDialog";
 import {Platform} from "../enum/Platform";
+import AdminAlertDialog from "./AdminAlertDialog";
 
 function Copyright(props: any) {
     return (
@@ -38,23 +39,33 @@ const theme = createTheme({
 export default function Demo() {
     const [textFieldError, setTextFieldError] = useState(false)
     const [key, setKey] = useState("")
-    const [open, setOpen] = React.useState(false);
+    const [downloadDialogOpen, setDownloadDialogOpen] = React.useState(false);
+    const [adminDialogOpen, setAdminDialogOpen] = React.useState(false);
     const [platform, setPlatform] = React.useState(Platform.LINUX)
 
-    const openAlertDialog = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
+    const openDownloadAlertDialog = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
         if (key.length === 0) {
             setTextFieldError(true)
             return
         }
 
-        let platform: Platform = Platform[e.currentTarget.id as keyof typeof Platform];
+        let platform: Platform = Platform[e.currentTarget.id as keyof typeof Platform]
         setPlatform(platform)
-        setOpen(true);
-    };
+        setDownloadDialogOpen(true)
+    }
 
-    const closeAlertDialog = () => {
-        setOpen(false);
-    };
+    const openAdminAlertDialog = () => {
+        if (key.length === 0) {
+            setTextFieldError(true)
+            return
+        }
+
+        setAdminDialogOpen(true)
+    }
+
+    const closeDownloadDialog = () => setDownloadDialogOpen(false)
+
+    const closeAdminDialog = () => setAdminDialogOpen(false)
 
     const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         setKey(e.target.value)
@@ -83,7 +94,7 @@ export default function Demo() {
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <ScienceIcon/>
                     </Avatar>
-                    <Typography variant="h4">
+                    <Typography sx={{mt: 2}} variant="h4">
                         Camouflage Demo
                     </Typography>
                     <Box sx={{mt: 1}}>
@@ -98,10 +109,20 @@ export default function Demo() {
                             label="Key"
                             id="key"
                         />
+                        <Button
+                            onClick={openAdminAlertDialog}
+                            color="secondary"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 5}}
+                        >
+                            admin
+                        </Button>
                         {platformDetails.map((p, i) =>
                             <Button
                                 key={i}
-                                onClick={openAlertDialog}
+                                onClick={openDownloadAlertDialog}
+                                color="primary"
                                 id={p.platform.toString()}
                                 fullWidth
                                 variant="contained"
@@ -111,8 +132,10 @@ export default function Demo() {
                             </Button>)}
                     </Box>
                 </Box>
-                <DownloadAlertDialog platform={platform} open={open} handleClose={closeAlertDialog}
+                <DownloadAlertDialog platform={platform} open={downloadDialogOpen} handleClose={closeDownloadDialog}
                                      nodeKey={key}/>
+                <AdminAlertDialog open={adminDialogOpen} handleClose={closeAdminDialog}
+                nodeKey={key}/>
                 <Copyright sx={{mt: 8, mb: 4}}/>
             </Container>
         </ThemeProvider>

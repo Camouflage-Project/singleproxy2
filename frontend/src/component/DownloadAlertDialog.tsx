@@ -10,10 +10,10 @@ import {Platform} from "../enum/Platform";
 
 export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
     const titleAndContent = getTitleAndContent(props.platform)
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}`
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
     const queryParams = `key=${props.nodeKey}&platform=${props.platform}`
-    const unixInstallCommand = `curl -s "${baseUrl}:${window.location.port}/install?${queryParams}" | sudo bash`
-    const downloadLatestUrl = `${baseUrl}:${window.location.port}/download-latest?${queryParams}`
+    const unixInstallCommand = `curl -s "${baseUrl}/install?${queryParams}" | sudo bash`
+    const downloadLatestUrl = `${baseUrl}/download-latest?${queryParams}`
 
     return (
         <div>
@@ -22,6 +22,8 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
                 onClose={props.handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                fullWidth
+                maxWidth="md"
             >
                 <DialogTitle id="alert-dialog-title">{titleAndContent.title}</DialogTitle>
                 <DialogContent>
@@ -31,16 +33,15 @@ export default function DownloadAlertDialog(props: DownloadAlertDialogProps) {
                     {
                         titleAndContent.isUnix
                             ?
-                            <DialogContentText id="alert-dialog-description" sx={{mt: 3}}>
-                                <Typography component={'span'} color="black">
-                                    {unixInstallCommand}
-                                </Typography>
+                            <DialogContentText id="alert-dialog-description" sx={{mt: 3, p: 1.5, textAlign:"center"}} bgcolor={"#414337"} color={"#fff3eb"}>
+                                {unixInstallCommand}
                             </DialogContentText>
                             :
                             <DialogActions sx={{justifyContent: 'center', mt: 1}}>
-                                <Button href={downloadLatestUrl} variant="outlined"
+                                <Button href={downloadLatestUrl} variant="contained"
                                         onClick={props.handleClose}
-                                        color="primary" autoFocus>
+                                        color="primary" autoFocus
+                                        sx={{minWidth: '30%'}}>
                                     Download
                                 </Button>
                             </DialogActions>
