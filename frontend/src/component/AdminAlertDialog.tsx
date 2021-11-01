@@ -13,7 +13,7 @@ import axios from 'axios';
 
 export default function AdminAlertDialog(props: AdminDialogProps) {
     const [proxies, setProxies] = React.useState<Array<Proxy>>([])
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}:8080`
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`
 
     const fetchProxies = () => {
         axios.get(`${baseUrl}/proxies`, {
