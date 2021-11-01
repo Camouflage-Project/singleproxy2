@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class ResidentialProxyProvider(private val residentialProxyRepo: ResidentialProxyRepo) {
 
-    private val keyToProxies = runBlocking { residentialProxyRepo.findAll() }
+    private val keyToProxies = runBlocking { residentialProxyRepo.findAllWithLastHeartbeatWithin30Sec() }
         .groupBy { it.key }
         .mapValues { LinkedBlockingQueue(it.value) }
         .toMutableMap()

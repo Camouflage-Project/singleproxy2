@@ -34,8 +34,8 @@ class ResidentialProxyRepo {
         connectionPool
             .sendPreparedStatement(
                 "INSERT INTO residential_proxy" +
-                    "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 listOf(
                     proxy.id,
                     proxy.key,
@@ -72,6 +72,13 @@ class ResidentialProxyRepo {
     suspend fun findAll() =
         connectionPool
             .sendPreparedStatement("SELECT * FROM residential_proxy")
+            .await()
+            .rows
+            .map { it.toResidentialProxy() }
+
+    suspend fun findAllWithLastHeartbeatWithin30Sec() =
+        connectionPool
+            .sendPreparedStatement("select * from residential_proxy where last_heartbeat > (current_timestamp - interval '30 seconds')")
             .await()
             .rows
             .map { it.toResidentialProxy() }
