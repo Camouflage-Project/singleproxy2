@@ -35,7 +35,10 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.ktor.ext.inject
+import java.io.File
 import java.util.UUID
 
 fun Application.configureRouting() {
@@ -157,6 +160,21 @@ fun Application.configureRouting() {
             )
 
             call.respond(HttpStatusCode.OK)
+        }
+
+        get("/download-sample-1mb") {
+            val file = withContext(Dispatchers.IO) { File("samplefile/1MB.txt") }
+            call.respondFile(file)
+        }
+
+        get("/download-sample-5mb") {
+            val file = withContext(Dispatchers.IO) { File("samplefile/5MB.txt") }
+            call.respondFile(file)
+        }
+
+        get("/download-sample-10mb") {
+            val file = withContext(Dispatchers.IO) { File("samplefile/10MB.txt") }
+            call.respondFile(file)
         }
 
         static("/") {

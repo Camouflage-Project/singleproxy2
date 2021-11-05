@@ -34,8 +34,8 @@ class ResidentialProxyRepo {
         connectionPool
             .sendPreparedStatement(
                 "INSERT INTO residential_proxy" +
-                        "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "(id, key, port, platform, registered, ip_address, last_heartbeat, created) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 listOf(
                     proxy.id,
                     proxy.key,
