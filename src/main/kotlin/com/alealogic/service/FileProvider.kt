@@ -25,19 +25,19 @@ class FileProvider(
         .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -v -o $it && chmod +x $it && ./$it" }
 
     suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, File> {
+        logger.info("key={}", key)
         val clientId = UUID.randomUUID()
         val nextAvailablePort = portProvider.findNextAvailablePort()
 
         residentialProxyService.create(clientId, key, nextAvailablePort, platform)
 
         val ldflags =
-            "-s -w " +
-                    "-X desktopClient/config.ClientId=$clientId " +
-                    "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
-                    "-X desktopClient/config.BaseUrl=$baseUrl " +
-                    "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                    "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
-                    "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
+            "-X desktopClient/config.ClientId=$clientId " +
+                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                "-X desktopClient/config.BaseUrl=$baseUrl " +
+                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
+                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
         val file =
@@ -47,7 +47,7 @@ class FileProvider(
     }
 
     private fun buildDesktopClient(ldflags: String, platform: Platform): String {
-        val releaseName = currentRelease + if (platform == Platform.WINDOWS) ".exe" else ""
+        val releaseName = currentRelease + UUID.randomUUID() + if (platform == Platform.WINDOWS) ".exe" else ""
         val goArch = if (platform == Platform.MAC_OS_APPLE_SILICON) "arm64" else "amd64"
         val goos =
             when (platform) {
@@ -55,6 +55,11 @@ class FileProvider(
                 Platform.WINDOWS -> "windows"
                 Platform.MAC_OS_INTEL, Platform.MAC_OS_APPLE_SILICON -> "darwin"
             }
+
+        logger.info("GOOS={}", goos)
+        logger.info("GOARCH={}", goArch)
+        logger.info("releaseName={}", releaseName)
+        logger.info("ldflags={}", ldflags)
 
         try {
             val proc = ProcessBuilder(
