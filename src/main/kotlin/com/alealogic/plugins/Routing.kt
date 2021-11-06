@@ -162,21 +162,6 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
-        get("/download-sample-1mb") {
-            val file = withContext(Dispatchers.IO) { File("samplefile/1MB.txt") }
-            call.respondFile(file)
-        }
-
-        get("/download-sample-5mb") {
-            val file = withContext(Dispatchers.IO) { File("samplefile/5MB.txt") }
-            call.respondFile(file)
-        }
-
-        get("/download-sample-10mb") {
-            val file = withContext(Dispatchers.IO) { File("samplefile/10MB.txt") }
-            call.respondFile(file)
-        }
-
         static("/") {
             resources("frontend")
             defaultResource("frontend/index.html")

@@ -31,12 +31,13 @@ class FileProvider(
         residentialProxyService.create(clientId, key, nextAvailablePort, platform)
 
         val ldflags =
-            "-X desktopClient/config.ClientId=$clientId " +
-                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
-                "-X desktopClient/config.BaseUrl=$baseUrl " +
-                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
-                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
+            "-s -w " +
+                    "-X desktopClient/config.ClientId=$clientId " +
+                    "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                    "-X desktopClient/config.BaseUrl=$baseUrl " +
+                    "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                    "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
+                    "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
         val file =
