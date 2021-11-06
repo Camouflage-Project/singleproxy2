@@ -65,7 +65,7 @@ const getTable = (proxies: Array<Proxy>) =>
                     >
                         <TableCell align="center">{proxy.platform}</TableCell>
                         <TableCell align="center">{proxy.registered.toString()}</TableCell>
-                        <TableCell align="center">{proxy.ipAddress}</TableCell>
+                        <TableCell align="center">{formatIpAddress(proxy.ipAddress)}</TableCell>
                         <TableCell align="center">{formatLocalDateTime(proxy.lastHeartbeat)}</TableCell>
                         <TableCell align="center">{formatLocalDateTime(proxy.created)}</TableCell>
                     </TableRow>
@@ -74,8 +74,15 @@ const getTable = (proxies: Array<Proxy>) =>
         </Table>
     </TableContainer>
 
-const formatLocalDateTime = (ldt: LocalDateTime) =>
-    `${ldt.year}-${ldt.month}-${ldt.day}-T${ldt.hour}:${ldt.minute}:${ldt.second}`
+const formatIpAddress = (ip: String) => {
+    if (ip) return ip
+    else return "-"
+}
+
+const formatLocalDateTime = (ldt: LocalDateTime) => {
+    if (ldt) return `${ldt.year}-${ldt.month}-${ldt.day}-T${ldt.hour}:${ldt.minute}:${ldt.second}`
+    else return "-"
+}
 
 interface AdminDialogProps {
     open: boolean,

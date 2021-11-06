@@ -85,7 +85,7 @@ class ResidentialProxyRepo {
 
     suspend fun findAllByKey(key: String) =
         connectionPool
-            .sendPreparedStatement("SELECT * FROM residential_proxy WHERE key = ?", listOf(key))
+            .sendPreparedStatement("SELECT * FROM residential_proxy WHERE key = ? order by created", listOf(key))
             .await()
             .rows
             .map { it.toResidentialProxy() }
