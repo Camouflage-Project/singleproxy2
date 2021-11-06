@@ -51,10 +51,10 @@ const getTable = (proxies: Array<Proxy>) =>
             <TableHead>
                 <TableRow>
                     <TableCell align="center">Platform</TableCell>
-                    <TableCell align="center">Registered</TableCell>
+                    <TableCell align="center">Downloaded</TableCell>
+                    <TableCell align="center">Successfully Installed</TableCell>
                     <TableCell align="center">IP Address</TableCell>
                     <TableCell align="center">Last Heartbeat</TableCell>
-                    <TableCell align="center">Created</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -64,10 +64,10 @@ const getTable = (proxies: Array<Proxy>) =>
                         sx={{'&:last-child td, &:last-child th': {border: 0}}}
                     >
                         <TableCell align="center">{proxy.platform}</TableCell>
+                        <TableCell align="center">{formatLocalDateTime(proxy.created)}</TableCell>
                         <TableCell align="center">{proxy.registered.toString()}</TableCell>
                         <TableCell align="center">{formatIpAddress(proxy.ipAddress)}</TableCell>
                         <TableCell align="center">{formatLocalDateTime(proxy.lastHeartbeat)}</TableCell>
-                        <TableCell align="center">{formatLocalDateTime(proxy.created)}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
