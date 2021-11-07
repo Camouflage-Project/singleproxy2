@@ -22,7 +22,7 @@ class FileProvider(
     private val goCommand = "go"
 
     fun getInstallationScript(key: String, platform: Platform): String = currentRelease
-        .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -v -o $it && chmod +x $it && ./$it" }
+        .let { "curl \"$baseUrl/download-latest?key=$key&platform=$platform\" -o $it && chmod +x $it && ./$it" }
 
     suspend fun getReleaseNameAndFile(key: String, platform: Platform): Pair<String, File> {
         logger.info("key={}", key)
@@ -32,12 +32,13 @@ class FileProvider(
         residentialProxyService.create(clientId, key, nextAvailablePort, platform)
 
         val ldflags =
-            "-X desktopClient/config.ClientId=$clientId " +
-                "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
-                "-X desktopClient/config.BaseUrl=$baseUrl " +
-                "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
-                "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
-                "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
+            "-s -w " +
+                    "-X desktopClient/config.ClientId=$clientId " +
+                    "-X desktopClient/config.InjectedRemoteSshPort=$nextAvailablePort " +
+                    "-X desktopClient/config.BaseUrl=$baseUrl " +
+                    "-X desktopClient/config.NodeIp=${configProvider.getNodeIp()} " +
+                    "-X desktopClient/config.NodeLimitedUserName=${configProvider.getNodeLimitedUsername()} " +
+                    "-X desktopClient/config.NodeLimitedUserPassword=${configProvider.getNodeLimitedUserPassword()}"
 
         val releaseName = buildDesktopClient(ldflags, platform)
         val file =

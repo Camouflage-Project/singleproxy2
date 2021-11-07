@@ -80,8 +80,14 @@ const formatIpAddress = (ip: String) => {
 }
 
 const formatLocalDateTime = (ldt: LocalDateTime) => {
-    if (ldt) return `${ldt.year}-${ldt.month}-${ldt.day}-T${ldt.hour}:${ldt.minute}:${ldt.second}`
+    if (ldt)
+        return `${ldt.year}-${fmt(ldt.month)}-${fmt(ldt.day)}-T${fmt(ldt.hour)}:${fmt(ldt.minute)}:${fmt(ldt.second)}`
     else return "-"
+}
+
+const fmt = (temporalElement: BigInt) => {
+    if ((Number(temporalElement) / 10) < 1) return `0${temporalElement}`
+    else return temporalElement.toString()
 }
 
 interface AdminDialogProps {
