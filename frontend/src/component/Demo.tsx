@@ -20,7 +20,6 @@ function Copyright(props: any) {
             Camouflage
             {' '}
             {new Date().getFullYear()}
-            {'.'}
         </Typography>
     );
 }
